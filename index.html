@@ -163,6 +163,233 @@
           </div>
         </div>
       </section>
+
+      <section id="pricing" class="pricing section-rule">
+        <div class="pricing-heading">
+          <div>
+            <div class="eyebrow"><span>02</span> PUBLIC COST MODEL</div>
+            <h2>Price the signal.<br /><em>See every assumption.</em></h2>
+          </div>
+          <div class="pricing-intro">
+            <p>
+              Choose the inference path for each language, including your own cluster through AI
+              Gateway. Then compare hot shadow with a single-active route, line by line.
+            </p>
+            <span class="rate-date">USD LIST PRICES · CHECKED SEP 28, 2026</span>
+          </div>
+        </div>
+
+        <div class="calculator-grid">
+          <form id="pricing-form" class="pricing-controls bracket-card">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+
+            <div class="calculator-header">
+              <span class="mono-label">YOUR MONTH</span>
+              <span id="allowance-summary">300,000 free AI neurons applied</span>
+            </div>
+
+            <fieldset class="model-routes">
+              <legend class="mono-label">MODEL ROUTES</legend>
+              <div class="model-route-grid">
+                <label class="model-route" for="english-model">
+                  <span><b>EN</b> English route</span>
+                  <select id="english-model">
+                    <option value="flux" selected>Flux · $0.0077/min</option>
+                    <option value="nova">Nova-3 · $0.0092/min</option>
+                    <option value="cluster">No Workers AI · own cluster</option>
+                  </select>
+                </label>
+                <label class="model-route" for="french-model">
+                  <span><b>FR</b> French route</span>
+                  <select id="french-model">
+                    <option value="flux">Flux · $0.0077/min</option>
+                    <option value="nova" selected>Nova-3 · $0.0092/min</option>
+                    <option value="cluster">No Workers AI · own cluster</option>
+                  </select>
+                </label>
+              </div>
+              <label id="cluster-rate-field" class="pricing-field cluster-rate-field" for="cluster-rate" hidden>
+                <span>Own-cluster inference rate <output>USD / audio min</output></span>
+                <input id="cluster-rate" type="number" min="0" max="100" step="0.0001" value="0" inputmode="decimal" aria-describedby="pricing-validation" required />
+                <small>Enter the amortized compute or provider cost; AI Gateway core features are $0.</small>
+              </label>
+            </fieldset>
+
+            <div class="pricing-field-grid">
+              <label class="pricing-field" for="session-count">
+                <span>Voice sessions</span>
+                <input id="session-count" type="number" min="1" max="9007199254740991" step="1" value="1000" inputmode="numeric" aria-describedby="pricing-validation" required />
+                <small>One WebSocket session each</small>
+              </label>
+              <label class="pricing-field" for="minutes-per-session">
+                <span>Average minutes</span>
+                <input id="minutes-per-session" type="number" min="0.1" max="1440" step="0.1" value="5" inputmode="decimal" aria-describedby="pricing-validation" required />
+                <small>Captured audio, including silence</small>
+              </label>
+              <label class="pricing-field pricing-field-wide" for="french-share">
+                <span>French audio share <output id="french-share-output" for="french-share">30%</output></span>
+                <input id="french-share" type="range" min="0" max="100" step="1" value="30" />
+                <small>English takes the remaining 70%</small>
+              </label>
+              <label class="pricing-field" for="active-days">
+                <span>Active days</span>
+                <input id="active-days" type="number" min="1" max="31" step="1" value="30" inputmode="numeric" aria-describedby="pricing-validation" required />
+                <small>Workers AI resets daily</small>
+              </label>
+            </div>
+            <p id="pricing-validation" class="validation-message" role="status" hidden></p>
+
+            <details class="throughput-converter">
+              <summary>Convert network throughput <span>+</span></summary>
+              <div class="throughput-fields">
+                <label class="throughput-field" for="throughput-gbps">
+                  <span>Audio ingress</span>
+                  <div><input id="throughput-gbps" type="number" min="0" max="10000" step="0.1" value="19" inputmode="decimal" aria-describedby="throughput-validation" required /><i>Gbps</i></div>
+                </label>
+                <label class="throughput-field" for="stream-kbps">
+                  <span>Each stream</span>
+                  <div><input id="stream-kbps" type="number" min="1" max="100000" step="1" value="256" inputmode="numeric" aria-describedby="throughput-validation" required /><i>kbps</i></div>
+                </label>
+                <label class="throughput-field" for="active-hours">
+                  <span>Active time</span>
+                  <div><input id="active-hours" type="number" min="0" max="744" step="1" value="720" inputmode="numeric" aria-describedby="throughput-validation" required /><i>hours</i></div>
+                </label>
+                <label class="throughput-field" for="throughput-utilization">
+                  <span>Utilization</span>
+                  <div><input id="throughput-utilization" type="number" min="0" max="100" step="1" value="100" inputmode="numeric" aria-describedby="throughput-validation" required /><i>%</i></div>
+                </label>
+              </div>
+              <p id="throughput-validation" class="validation-message" role="status" hidden></p>
+              <div class="throughput-result">
+                <div><strong id="throughput-minutes">3.21B audio min / month</strong><small id="throughput-formula">74,219 concurrent × 43,200 wall min × 100%</small></div>
+                <button id="apply-throughput" type="button">Use this volume</button>
+              </div>
+              <p>At this app’s 16 kHz PCM16 mono format, one stream is 256 kbps. Change the stream rate for compressed audio.</p>
+            </details>
+
+            <div class="billing-options" aria-label="Billing assumptions">
+              <label class="billing-toggle" for="apply-allowances">
+                <input id="apply-allowances" type="checkbox" aria-label="Apply account allowances" checked />
+                <span><strong>Apply account allowances</strong><small>Assume this app can use the full included amounts</small></span>
+              </label>
+              <label class="billing-toggle" for="include-plan">
+                <input id="include-plan" type="checkbox" aria-label="Include Workers Paid plan" checked />
+                <span><strong>Include Workers Paid plan</strong><small>Turn off if the account already pays the $5 monthly minimum</small></span>
+              </label>
+            </div>
+          </form>
+
+          <div class="pricing-results">
+            <div class="estimate-pair">
+              <article class="estimate-card bracket-card">
+                <span class="corner tl"></span><span class="corner tr"></span>
+                <span class="corner bl"></span><span class="corner br"></span>
+                <span class="estimate-kicker"><i></i> CURRENT · HOT SHADOW</span>
+                <div class="estimate-price"><strong id="dual-total">$0.00</strong><span>/ month</span></div>
+                <p id="dual-route-description">Every captured minute runs through both configured routes.</p>
+                <div class="estimate-meta">
+                  <span><b id="dual-per-session">$0.0000</b> / session</span>
+                  <span><b id="dual-model-minutes">0</b> model min</span>
+                </div>
+              </article>
+
+              <article class="estimate-card estimate-card-routed bracket-card">
+                <span class="corner tl"></span><span class="corner tr"></span>
+                <span class="corner bl"></span><span class="corner br"></span>
+                <span class="estimate-kicker"><i></i> PROPOSED · SINGLE ACTIVE</span>
+                <div class="estimate-price"><strong id="single-total">$0.00</strong><span>/ month</span></div>
+                <p id="single-route-description">Each minute reaches the route selected for its language.</p>
+                <div class="estimate-meta">
+                  <span><b id="single-per-session">$0.0000</b> / session</span>
+                  <span><b id="single-model-minutes">0</b> model min</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="savings-bar">
+              <div><span class="mono-label">ESTIMATED SAVINGS</span><strong id="savings-total">$0.00 / month</strong></div>
+              <span id="savings-percent" class="savings-percent">0%</span>
+              <p id="savings-context">Calculated after selected account allowances.</p>
+            </div>
+
+            <div class="breakdown bracket-card">
+              <span class="corner tl"></span><span class="corner tr"></span>
+              <span class="corner bl"></span><span class="corner br"></span>
+              <div class="breakdown-header">
+                <div><span class="mono-label">MONTHLY BREAKDOWN</span><h3 id="captured-minutes">0 captured minutes</h3></div>
+                <span>Current</span><span>Single active</span>
+              </div>
+              <div class="breakdown-table-wrap">
+                <table class="breakdown-table">
+                  <thead>
+                    <tr><th scope="col">Line item</th><th scope="col">Current</th><th scope="col">Single active</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row">Workers Paid plan</th><td id="dual-plan-cost">$0.00</td><td id="single-plan-cost">$0.00</td></tr>
+                    <tr><th scope="row">Workers AI inference</th><td id="dual-ai-cost">$0.00</td><td id="single-ai-cost">$0.00</td></tr>
+                    <tr><th scope="row">Own-cluster inference</th><td id="dual-cluster-cost">$0.00</td><td id="single-cluster-cost">$0.00</td></tr>
+                    <tr><th scope="row">AI Gateway core</th><td id="dual-gateway-cost">$0.00</td><td id="single-gateway-cost">$0.00</td></tr>
+                    <tr><th scope="row">Durable Object requests</th><td id="dual-do-request-cost">$0.00</td><td id="single-do-request-cost">$0.00</td></tr>
+                    <tr><th scope="row">Durable Object duration</th><td id="dual-do-duration-cost">$0.00</td><td id="single-do-duration-cost">$0.00</td></tr>
+                    <tr><th scope="row">Worker requests</th><td id="dual-worker-cost">$0.00</td><td id="single-worker-cost">$0.00</td></tr>
+                  </tbody>
+                  <tfoot>
+                    <tr><th scope="row">Estimated total</th><td id="dual-table-total">$0.00</td><td id="single-table-total">$0.00</td></tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <p id="pricing-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
+          </div>
+        </div>
+
+        <div class="sizing-heading">
+          <div><span class="mono-label">SIZING LEDGER</span><h3>Why each feature is this size</h3></div>
+          <p>Live usage math for the values above, with the public source behind every Cloudflare rate.</p>
+        </div>
+
+        <div class="sizing-ledger">
+          <article class="sizing-card">
+            <span>WORKERS AI · INFERENCE</span>
+            <strong id="sizing-ai-value">0 → 0 neurons</strong>
+            <p id="sizing-ai-copy">Selected model minutes multiplied by each model’s neuron rate.</p>
+            <a href="https://developers.cloudflare.com/workers-ai/platform/pricing/" target="_blank" rel="noreferrer">Public Workers AI pricing ↗</a>
+          </article>
+          <article class="sizing-card">
+            <span>AI GATEWAY · OWN CLUSTER</span>
+            <strong id="sizing-gateway-value">No custom-provider traffic</strong>
+            <p id="sizing-gateway-copy">Core gateway features cost $0; self-hosted inference uses your entered rate.</p>
+            <div class="sizing-links">
+              <a href="https://developers.cloudflare.com/ai-gateway/reference/pricing/" target="_blank" rel="noreferrer">Gateway pricing ↗</a>
+              <a href="https://developers.cloudflare.com/ai-gateway/configuration/custom-providers/" target="_blank" rel="noreferrer">Custom providers ↗</a>
+            </div>
+          </article>
+          <article class="sizing-card">
+            <span>DURABLE OBJECTS · SESSION STATE</span>
+            <strong id="sizing-do-value">0 requests · 0 GB-s</strong>
+            <p id="sizing-do-copy">One connection plus audio frames at the 20:1 WebSocket billing ratio.</p>
+            <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noreferrer">Public Durable Objects pricing ↗</a>
+          </article>
+          <article class="sizing-card">
+            <span>WORKERS · EDGE ENTRY</span>
+            <strong id="sizing-worker-value">0 upgrades</strong>
+            <p id="sizing-worker-copy">One billed Worker request opens each voice WebSocket; static assets are free.</p>
+            <a href="https://developers.cloudflare.com/workers/platform/pricing/" target="_blank" rel="noreferrer">Public Workers pricing ↗</a>
+          </article>
+        </div>
+
+        <details class="pricing-assumptions">
+          <summary>Calculation assumptions and exclusions <span>+</span></summary>
+          <div>
+            <p><strong>Selected routes.</strong> Hot shadow sends every minute to both configured route slots, even if they select the same target. Single-active sends English only to the English route and French only to the French route. It assumes local language detection, no paid classifier, and no duplicated handoff buffer.</p>
+            <p><strong>Own cluster.</strong> “No Workers AI” uses an AI Gateway custom provider pointed at your HTTPS inference endpoint. Gateway core features are $0; your entered per-minute rate represents cluster or provider cost. Optional Gateway logging follows Workers Logs pricing and is not estimated.</p>
+            <p><strong>Free allocation.</strong> Workers AI includes 10,000 neurons per active day. The estimate assumes even daily traffic; spikes can change the bill. All Workers and Durable Objects allowances are account-wide.</p>
+            <p><strong>Durable Object.</strong> The installed client sends approximately 600 audio frames per minute; the estimate uses 600 as a conservative cadence. Cloudflare bills incoming WebSocket messages at 20:1, plus one connection request per session. Duration uses 128 MB for the full call because active provider WebSockets prevent hibernation.</p>
+            <p><strong>Not modeled.</strong> Worker CPU, control frames, SQLite metadata, taxes, Enterprise discounts, retries, and other account traffic are excluded. Static asset requests and data transfer have no additional charge. Prices are USD public list prices, not a Cloudflare quote.</p>
+          </div>
+        </details>
+      </section>
     </main>
 
     <footer>

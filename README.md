@@ -12,6 +12,7 @@ Voice Router streams microphone audio to two speech-to-text models and selects t
 - Manual Flux and Nova-3 routing controls
 - Hot-shadow transcription for fast handoffs
 - Live transcripts, routing state, latency, and switch telemetry
+- Public cost simulator comparing hot shadow with single-active routing
 - Stateful WebSocket sessions backed by a Durable Object
 - Responsive frontend served from Workers Static Assets
 
@@ -35,6 +36,57 @@ VoiceRouterAgent (Durable Object)
 ```
 
 Both models receive 16 kHz PCM16 audio. In automatic mode, Nova-3 language metadata selects Flux for English and Nova-3 for French. If one provider fails, the router falls back to the available model.
+
+## Pricing Simulator
+
+The application includes a client-side monthly cost simulator using Cloudflare's public USD list prices. Users choose a route for English and French independently: Flux, Nova-3, or no Workers AI model with inference sent to their own HTTPS cluster through an AI Gateway custom provider.
+
+For `M` captured audio minutes, French share `F`, and selected model neuron rates `N_en` and `N_fr`, Workers AI usage is estimated as:
+
+```text
+Current hot shadow: M * (N_en + N_fr) neurons
+Single active:      M * ((N_en * (1 - F)) + (N_fr * F)) neurons
+Workers AI cost:    max(0, neurons - free neurons) * $0.011 / 1,000
+```
+
+An own-cluster route has a Workers AI neuron rate of zero. Its audio minutes are multiplied by the user-entered amortized cluster or provider cost. AI Gateway core features are currently listed at $0, so the simulator itemizes the gateway at $0 and keeps external inference separate.
+
+The model rates are:
+
+- Flux WebSocket: 700 neurons or $0.0077 per audio minute
+- Nova-3 WebSocket: 836.36 neurons or $0.0092 per audio minute
+- Workers AI free allocation: 10,000 neurons per active day
+
+### Converting bandwidth to audio minutes
+
+The optional throughput helper converts aggregate audio ingress into the session volume used by the estimate:
+
+```text
+Concurrent streams = ingress Gbps * 1,000,000 / stream kbps
+Audio minutes      = concurrent streams * active hours * 60 * utilization
+Voice sessions     = audio minutes / average session minutes
+```
+
+For this application's 16 kHz, 16-bit, mono PCM audio, one stream is `256 kbps`. A sustained `19 Gbps` payload therefore represents about `74,219` concurrent streams, `106,875,000` audio minutes per day, or `3,206,250,000` audio minutes in a 30-day month. This is an upper-bound conversion unless the source figure is confirmed as sustained inbound audio payload; protocol overhead, egress, idle capacity, and compression change the result.
+
+### Feature sizing rationale
+
+- **Workers AI**: selected route minutes are multiplied by the public per-model neuron rate. The daily free allocation is subtracted before applying `$0.011 / 1,000 neurons`.
+- **AI Gateway**: custom providers can point to self-hosted HTTPS inference endpoints. Core gateway features add `$0`; own-cluster inference uses the editable per-audio-minute rate. Optional Gateway logs follow Workers Logs pricing and are excluded. The custom endpoint and streaming transport remain the user's implementation responsibility.
+- **Durable Objects requests**: each session opens one connection. The installed voice client emits a frame after accumulating at least 1,600 samples at 16 kHz. The estimate conservatively uses approximately 600 incoming frames per minute, which Cloudflare's 20:1 WebSocket billing ratio converts to 30 billable requests per minute.
+- **Durable Objects duration**: active provider WebSockets prevent hibernation during a call. The documented 128 MB allocation yields `60 seconds * 0.128 GB = 7.68 GB-s` per captured minute.
+- **Workers**: one initial WebSocket upgrade is billed per voice session. Static asset requests are free. CPU is excluded because it requires measured runtime usage.
+- **Workers Paid plan**: the optional `$5` line represents the account-wide monthly minimum. Turn it off when estimating incremental cost on an account that already has the plan.
+
+Worker CPU, control frames, SQLite metadata, taxes, Enterprise discounts, retries, and other account traffic are excluded. Included usage is account-wide, and the daily Workers AI allowance assumes traffic is spread evenly across the selected active days.
+
+Pricing sources, checked September 28, 2026:
+
+- [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/)
+- [AI Gateway pricing](https://developers.cloudflare.com/ai-gateway/reference/pricing/)
+- [AI Gateway custom providers](https://developers.cloudflare.com/ai-gateway/configuration/custom-providers/)
+- [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/)
+- [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
 
 ## Requirements
 
