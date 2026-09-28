@@ -1,0 +1,23 @@
+README.md
+  s_28e4fd6b34cb30::t_82787bb1c004c0 1-89
+SECURITY.md
+  s_28e4fd6b34cb30::t_6deae804b87374 1-9
+package.json
+  s_28e4fd6b34cb30::t_19bd73be0be82f 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a6b9a70f9c309f4f7151d631a926bcf5d755edf0",
+  "prompts": {},
+  "sessions": {
+    "s_28e4fd6b34cb30": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f37953e0bffeZF453WSceC5k2Q",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Stephane Nouvellon <stephane@cloudflare.com>"
+    }
+  }
+}
