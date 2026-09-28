@@ -1,0 +1,35 @@
+{
+  "name": "voice-router",
+  "version": "0.1.0",
+  "description": "Real-time English and French speech model routing on Cloudflare Workers AI.",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nouvellonsteph/ai-voice-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nouvellonsteph/ai-voice-router/issues"
+  },
+  "homepage": "https://github.com/nouvellonsteph/ai-voice-router#readme",
+  "type": "module",
+  "engines": {
+    "node": "^22.18.0 || >=24.11.0"
+  },
+  "scripts": {
+    "build": "vite build",
+    "check": "tsc --noEmit && vite build && wrangler deploy --dry-run",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "agents": "0.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.1",
+    "wrangler": "4.140.0"
+  }
+}

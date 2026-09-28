@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fffbf5" />
+    <meta
+      name="description"
+      content="A real-time bilingual voice router running on Cloudflare Workers AI."
+    />
+    <title>Voice Router | Cloudflare Workers AI</title>
+    <script type="module" src="/src/client.ts"></script>
+  </head>
+  <body>
+    <svg class="dot-grid" aria-hidden="true">
+      <defs>
+        <pattern id="dots" x="0" y="0" width="6.5" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2.5" cy="2.5" r="0.75" fill="#EBD5C1" />
+          <circle cx="5" cy="7.5" r="0.75" fill="#EBD5C1" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#dots)" />
+    </svg>
+
+    <div class="page-frame" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Voice Router home">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <span>VOICE / ROUTER</span>
+      </a>
+      <div class="header-status">
+        <span id="connection-dot" class="status-dot"></span>
+        <span id="connection-label">Connecting to edge</span>
+      </div>
+      <span class="prototype-pill">OPEN SOURCE</span>
+    </header>
+
+    <main>
+      <section class="hero section-rule">
+        <div class="eyebrow"><span>01</span> BILINGUAL EDGE INFERENCE</div>
+        <div class="hero-grid">
+          <div>
+            <h1>Speak naturally.<br /><em>Routing happens live.</em></h1>
+            <p class="hero-copy">
+              Talk in English or French. Two speech models listen at the edge while the router
+              chooses the strongest path in real time.
+            </p>
+          </div>
+          <div class="architecture-note">
+            <span class="mono-label">CURRENT PATH</span>
+            <div class="path-line">
+              <span>MIC</span><b></b><span>WORKER</span><b></b><strong id="hero-model">FLUX</strong>
+            </div>
+            <p id="route-explanation">Auto mode · English detected</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace section-rule">
+        <div class="control-column">
+          <div class="section-heading">
+            <div>
+              <span class="mono-label">ROUTING POLICY</span>
+              <h2>Choose the conductor</h2>
+            </div>
+            <span id="mode-value" class="value-pill">AUTO</span>
+          </div>
+
+          <div class="mode-switcher" role="radiogroup" aria-label="Model routing mode">
+            <button class="mode-button active" data-mode="auto" role="radio" aria-checked="true">
+              <span class="mode-icon auto-icon">A</span>
+              <span><strong>Auto route</strong><small>English ↔ French</small></span>
+              <i></i>
+            </button>
+            <button class="mode-button" data-mode="flux" role="radio" aria-checked="false">
+              <span class="mode-icon flux-icon">F</span>
+              <span><strong>Flux</strong><small>English voice agent</small></span>
+              <i></i>
+            </button>
+            <button class="mode-button" data-mode="nova" role="radio" aria-checked="false">
+              <span class="mode-icon nova-icon">N</span>
+              <span><strong>Nova-3</strong><small>Multilingual accuracy</small></span>
+              <i></i>
+            </button>
+          </div>
+
+          <div class="model-detail bracket-card">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="model-orbit">
+              <span id="flux-node" class="model-node active">FLUX</span>
+              <div class="orbit-center"><span id="language-code">EN</span><small>DETECTED</small></div>
+              <span id="nova-node" class="model-node">NOVA</span>
+            </div>
+            <div class="model-meta">
+              <span><i class="live-mark"></i> Hot shadow active</span>
+              <span>16 kHz · PCM16</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio bracket-card">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+
+          <div class="studio-topline">
+            <div>
+              <span class="mono-label">LIVE TRANSCRIPT</span>
+              <span id="listening-status" class="listening-status">READY</span>
+            </div>
+            <button id="clear-button" class="text-button" type="button">Clear transcript</button>
+          </div>
+
+          <div id="transcript" class="transcript" aria-live="polite">
+            <div id="empty-state" class="empty-state">
+              <span class="quote-mark">“</span>
+              <p>Your words will appear here.</p>
+              <small>Try “Hello, how are you?” then “Bonjour, comment allez-vous ?”</small>
+            </div>
+          </div>
+
+          <div id="interim" class="interim" aria-live="polite"></div>
+
+          <div class="voice-control">
+            <div class="level-meter" id="level-meter" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <button id="mic-button" class="mic-button" type="button" aria-label="Start listening">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15.5a4 4 0 0 0 4-4v-5a4 4 0 0 0-8 0v5a4 4 0 0 0 4 4Z" />
+                <path d="M5.5 10.5v1a6.5 6.5 0 0 0 13 0v-1M12 18v3M9 21h6" />
+              </svg>
+              <span id="mic-label">Start speaking</span>
+            </button>
+            <div class="privacy-note"><span></span> Audio streams directly to Workers AI</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="telemetry section-rule">
+        <div class="telemetry-heading">
+          <div><span class="mono-label">ROUTER TELEMETRY</span><h2>Every handoff, visible.</h2></div>
+          <p>Routing events are emitted by the Durable Object controlling this session.</p>
+        </div>
+        <div class="telemetry-grid">
+          <div class="stat-card">
+            <span>ACTIVE MODEL</span><strong id="active-model-stat">FLUX</strong><small id="active-model-sub">English optimized</small>
+          </div>
+          <div class="stat-card">
+            <span>LANGUAGE</span><strong id="language-stat">EN</strong><small>Nova word metadata</small>
+          </div>
+          <div class="stat-card">
+            <span>LAST FINAL</span><strong id="latency-stat">—</strong><small>Speech to transcript</small>
+          </div>
+          <div class="event-card">
+            <span class="mono-label">SWITCH LOG</span>
+            <ol id="event-log">
+              <li><time>NOW</time><span>Router initialized on Cloudflare edge</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>BUILT ON CLOUDFLARE</span>
+      <span>WORKERS · DURABLE OBJECTS · WORKERS AI</span>
+      <span>VOICE ROUTER / 001</span>
+    </footer>
+
+    <div id="toast" class="toast" role="status"></div>
+  </body>
+</html>
